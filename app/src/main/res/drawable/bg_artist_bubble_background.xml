@@ -1,0 +1,9 @@
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <solid android:color="#DDFFDD" />
+    <corners android:radius="16dp"/> <!-- 말풍선의 모서리 둥글게 -->
+    <padding
+        android:left="12dp"
+        android:top="8dp"
+        android:right="12dp"
+        android:bottom="8dp"/>
+</shape>

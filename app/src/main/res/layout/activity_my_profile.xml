@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/my_profile"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MyProfileActivity">
+
+    <ImageView
+        android:id="@+id/iv_close_btn"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/baseline_close_40" />
+
+    <ImageView
+        android:id="@+id/iv_myprofile_profile"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:layout_gravity="center"
+        android:layout_marginStart="145dp"
+        android:layout_marginTop="450dp"
+        android:layout_marginEnd="146dp"
+        android:background="@drawable/circle"
+        android:scaleType="centerCrop"
+        app:layout_constraintBottom_toTopOf="@+id/tv_myprofile_nickname"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/baseline_person_150" />
+
+    <TextView
+        android:id="@+id/tv_myprofile_nickname"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="141dp"
+        android:layout_marginEnd="142dp"
+        android:text="user_nick_name"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toTopOf="@+id/tv_myprofile_message"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/iv_myprofile_profile" />
+
+    <TextView
+        android:id="@+id/tv_myprofile_message"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="160dp"
+        android:layout_marginEnd="160dp"
+        android:layout_marginBottom="23dp"
+        android:text="user_message"
+        android:textColor="#999999"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toTopOf="@+id/iv_profile_settings"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_myprofile_nickname" />
+
+    <ImageView
+        android:id="@+id/iv_profile_settings"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="180dp"
+        android:layout_marginTop="28dp"
+        android:layout_marginEnd="181dp"
+        android:layout_marginBottom="2dp"
+        app:layout_constraintBottom_toTopOf="@+id/tv_edit_profile"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_myprofile_message"
+        app:srcCompat="@drawable/baseline_settings_30" />
+
+    <TextView
+        android:id="@+id/tv_edit_profile"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="176dp"
+        android:layout_marginTop="2dp"
+        android:layout_marginEnd="177dp"
+        android:layout_marginBottom="232dp"
+        android:text="프로필 편집"
+        android:textColor="#999999"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/iv_profile_settings" />
+
+    <android.widget.Button
+        android:id="@+id/iv_profile_chat_btn"
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        android:layout_marginTop="200dp"
+        android:text="채팅하기"
+        android:textSize="18sp"
+        android:background="#333333"
+        android:textColor="@color/white"
+        android:textStyle="bold"
+        android:visibility="invisible"
+        app:layout_constraintTop_toBottomOf="@+id/tv_myprofile_message" />
+</androidx.constraintlayout.widget.ConstraintLayout>

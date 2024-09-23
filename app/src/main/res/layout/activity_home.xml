@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/home"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    tools:context=".HomeActivity">
+
+    <android.widget.Button
+        android:id="@+id/btn_home_home"
+        style="@style/navigation_btn"
+        android:layout_width="137dp"
+        android:layout_height="100dp"
+        android:layout_marginTop="810dp"
+        android:paddingTop="3dp"
+        android:drawableTop="@drawable/baseline_person_60"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/btn_home_chats"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <android.widget.Button
+        android:id="@+id/btn_home_chats"
+        style="@style/navigation_btn"
+        android:layout_width="137dp"
+        android:layout_height="100dp"
+        android:layout_marginTop="810dp"
+        android:paddingTop="3dp"
+        android:drawableTop="@drawable/baseline_chat_60"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/btn_home_more"
+        app:layout_constraintStart_toEndOf="@+id/btn_home_home"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <android.widget.Button
+        android:id="@+id/btn_home_more"
+        style="@style/navigation_btn"
+        android:layout_width="137dp"
+        android:layout_height="100dp"
+        android:layout_marginTop="810dp"
+        android:drawableTop="@drawable/baseline_settings_60"
+        android:paddingTop="3dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/btn_home_chats"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tv_home_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="25dp"
+        android:layout_marginTop="15dp"
+        android:layout_marginBottom="27dp"
+        android:text="ARTISTS"
+        android:textSize="30dp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/home_recy"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+    <ImageView
+        android:id="@+id/iv_home_search"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="30dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/baseline_search_40" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/home_recy"
+        android:layout_width="match_parent"
+        android:layout_height="690dp"
+        android:layout_marginTop="70dp"
+        android:layout_marginBottom="20dp"
+        app:layout_constraintBottom_toTopOf="@+id/btn_home_home"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/iv_home_search" />
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/withdrawal"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    tools:context=".WithdrawalActivity">
+
+    <android.widget.Button
+        android:id="@+id/btn_withdrawal_return"
+        style="@style/CustomReturnButtonStyle"
+        android:layout_width="120dp"
+        android:layout_height="40dp"
+        android:layout_marginStart="27dp"
+        android:layout_marginTop="20dp"
+        android:text="&lt; 탈퇴하기"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/iv_withdrawal_logo"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:layout_marginStart="130dp"
+        android:layout_marginTop="112dp"
+        android:layout_marginEnd="131dp"
+        android:layout_marginBottom="67dp"
+        app:layout_constraintBottom_toTopOf="@+id/tv_withdrawal_title"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btn_withdrawal_return"
+        app:srcCompat="@drawable/baseline_error_outline_150" />
+
+    <TextView
+        android:id="@+id/tv_withdrawal_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="28dp"
+        android:layout_marginEnd="205dp"
+        android:layout_marginBottom="16dp"
+        android:text="서비스 탈퇴 유의사항"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/tv_withdrawal_contents"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/tv_withdrawal_contents"
+        android:layout_width="350dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="28dp"
+        android:layout_marginEnd="33dp"
+        android:layout_marginBottom="93dp"
+        android:text="- satellite 탈퇴 시 서비스 혜택을 더이상 이용할 수 없습니다.&#10; - 대화내역 등 앱 이용내역이 모두 삭제되며 복구할 수 없습니다."
+        android:textColor="#999999"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toTopOf="@+id/linearLayout"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <LinearLayout
+        android:id="@+id/linearLayout"
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        android:layout_marginTop="93dp"
+        android:background="#CEB0B0"
+        android:orientation="vertical"
+        android:paddingTop="20dp"
+        app:layout_constraintTop_toBottomOf="@+id/tv_withdrawal_contents"
+        tools:layout_editor_absoluteX="0dp">
+
+        <CheckBox
+            android:id="@+id/cb_withdrawal_confirm"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:text="위 내용을 모두 확인하였고 탈퇴합니다." />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/et_withdrawal_pw_layout"
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginRight="20dp"
+            android:hint="비밀번호 입력"
+            app:boxStrokeColor="@color/withdrawal_color">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/et_withdrawal_pw"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textPassword" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+
+        <android.widget.Button
+            android:id="@+id/btn_withdrawal_submit"
+            style="@style/withdrawalButtonStyle"
+            android:layout_width="match_parent"
+            android:layout_height="70dp"
+            android:layout_marginTop="15dp"
+            android:enabled="false"
+            android:text="탈퇴하기" />
+
+    </LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
