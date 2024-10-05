@@ -1,4 +1,4 @@
-package com.example.satellite;
+package com.example.satellite.ui;
 
 import android.content.Context;
 import android.content.Intent;
@@ -8,7 +8,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -19,16 +18,14 @@ import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import org.json.JSONObject;
+import com.example.satellite.ApiService;
+import com.example.satellite.R;
+import com.example.satellite.RetrofitClientInstance;
+import com.example.satellite.adapter.MyAdapter;
+import com.example.satellite.model.home_user;
 
-import java.io.IOException;
 import java.util.ArrayList;
 
-import okhttp3.FormBody;
-import okhttp3.HttpUrl;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;

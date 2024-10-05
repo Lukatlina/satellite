@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
-    tools:context=".ChatsActivity">
+    tools:context=".ui.ChatsActivity">
 
     <android.widget.Button
         android:id="@+id/btn_chats_home"

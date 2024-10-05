@@ -1,4 +1,4 @@
-package com.example.satellite;
+package com.example.satellite.model;
 
 public class chat_user {
 
@@ -11,6 +11,11 @@ public class chat_user {
     private String nickname; // 보낸 사람 닉네임
     private String message; // 보낸 사람 메시지
     private String sent_time;
+
+    public chat_user(int is_artist, String sent_time) {
+        this.is_artist = is_artist;
+        this.sent_time = sent_time;
+    }
 
     public chat_user(int chat_id, String chatroom_name, int sender_id, int is_artist, String image, String nickname, String message, String sent_time) {
         this.chat_id = chat_id;

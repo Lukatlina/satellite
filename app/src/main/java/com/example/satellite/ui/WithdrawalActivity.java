@@ -1,4 +1,4 @@
-package com.example.satellite;
+package com.example.satellite.ui;
 
 import android.content.Context;
 import android.content.DialogInterface;
@@ -21,6 +21,10 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.example.satellite.ApiService;
+import com.example.satellite.R;
+import com.example.satellite.RetrofitClientInstance;
+import com.example.satellite.model.WithdrawRequest;
 import com.google.android.material.textfield.TextInputEditText;
 
 import org.json.JSONObject;

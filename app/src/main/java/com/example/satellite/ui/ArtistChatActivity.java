@@ -1,4 +1,4 @@
-package com.example.satellite;
+package com.example.satellite.ui;
 
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
@@ -11,7 +11,6 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -28,22 +27,21 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.Glide;
-import com.google.gson.Gson;
+import com.example.satellite.ApiService;
+import com.example.satellite.ChatService;
+import com.example.satellite.R;
+import com.example.satellite.RetrofitClientInstance;
+import com.example.satellite.adapter.ArtistAdapter;
+import com.example.satellite.model.chat_user;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
-import java.net.Socket;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.Locale;
 
 import okhttp3.FormBody;
@@ -55,11 +53,14 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class FanChatActivity extends AppCompatActivity  {
-    private static final String TAG = "FanChatActivity";
+public class ArtistChatActivity extends AppCompatActivity {
+
+    private static final String TAG = "ArtistChatActivity";
+
     private ChatService chatService;
     private boolean isBound = false;
 
+    ImageView iv_artist_chat_back_btn;
     ImageView iv_message_search;
 
     SharedPreferences user;
@@ -71,19 +72,18 @@ public class FanChatActivity extends AppCompatActivity  {
 
     RecyclerView recyclerView;
     LinearLayoutManager linear;
-    ChatAdapter adapter;
+    ArtistAdapter adapter;
 
-    ImageView iv_fan_chat_back_btn;
-    EditText et_chat_message;
-    ImageButton btn_fan_chat_send_message;
-    TextView tv_fan_chat_room_name;
+    EditText et_artist_chat_message;
+    ImageButton btn_artist_chat_send_message;
+    TextView tv_artist_chat_room_name;
 
     ArrayList<chat_user> messages = new ArrayList<>();
 
     chat_user currentUser;
 
-    String fan_image;
-    String fan_nickname;
+    String artist_image;
+    String artist_nickname;
 
     int chat_id;
     String chatroom_name;
@@ -94,6 +94,7 @@ public class FanChatActivity extends AppCompatActivity  {
     String message;
     String sent_time;
     String formattedTime;
+    String lastDate = "";
 
     private ServiceConnection serviceConnection = new ServiceConnection() {
         @Override
@@ -121,25 +122,25 @@ public class FanChatActivity extends AppCompatActivity  {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_fan_chat);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.fan_chat), (v, insets) -> {
+        setContentView(R.layout.activity_artist_chat);
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.artist_chat), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
 
 
-        tv_fan_chat_room_name = findViewById(R.id.tv_fan_chat_room_name);
-        recyclerView = findViewById(R.id.chatroom_recy);
+        tv_artist_chat_room_name = findViewById(R.id.tv_artist_chat_room_name);
+        recyclerView = findViewById(R.id.artist_chatroom_recy);
 
-        iv_fan_chat_back_btn = findViewById(R.id.iv_fan_chat_back_btn);
-        et_chat_message = findViewById(R.id.et_chat_message);
-        btn_fan_chat_send_message = findViewById(R.id.btn_fan_chat_send_message);
+        iv_artist_chat_back_btn = findViewById(R.id.iv_artist_chat_back_btn);
+        et_artist_chat_message = findViewById(R.id.et_artist_chat_message);
+        btn_artist_chat_send_message = findViewById(R.id.btn_artist_chat_send_message);
 
         linear = new LinearLayoutManager(getApplicationContext());
         linear.setOrientation(RecyclerView.VERTICAL);
         recyclerView.setLayoutManager(linear);
-        adapter = new ChatAdapter(messages, getApplicationContext());
+        adapter = new ArtistAdapter(messages, getApplicationContext());
         recyclerView.setAdapter(adapter);
 
         user = this.getSharedPreferences("user", Context.MODE_PRIVATE);
@@ -148,22 +149,18 @@ public class FanChatActivity extends AppCompatActivity  {
         // 먼저 인텐트에서 user_id를 꺼내오기
         Intent intent = getIntent();
         artist_id = intent.getIntExtra("artist_id", -1);
-        uniq_id = user.getString("uniq_id", "");
         user_id = user.getInt("user_id", -1);
-        is_artist = user.getInt("is_artist",0);
-
-
+        is_artist = user.getInt("is_artist", 1);
+        uniq_id = user.getString("uniq_id", "");
+        artist_id = user_id;
 
         Log.i(TAG, "uniq_id : " + uniq_id);
         Log.i(TAG, "user_id : " + user_id);
         Log.i(TAG, "is_artist : " + is_artist);
         Log.i(TAG, "artist_id : " + artist_id);
 
-
-        Log.i(TAG, "onCreate: http 요청 전 메시지 리스트 크기" + messages.size());
-
         // 서비스 시작 및 바인딩
-        Intent serviceIntent = new Intent(FanChatActivity.this, ChatService.class);
+        Intent serviceIntent = new Intent(ArtistChatActivity.this, ChatService.class);
         bindService(serviceIntent, serviceConnection, Context.BIND_AUTO_CREATE);
 
         // BroadcastReceiver 등록
@@ -174,21 +171,18 @@ public class FanChatActivity extends AppCompatActivity  {
         loadUserData(uniq_id, is_artist);
 
 
-
-        btn_fan_chat_send_message.setOnClickListener(new View.OnClickListener() {
+        btn_artist_chat_send_message.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // 텍스트 메시지로 부터 작성된 메시지 가져오기
-                String sending_message = et_chat_message.getText().toString().trim();
-
+                String sending_message = et_artist_chat_message.getText().toString().trim();
                 if (!sending_message.isEmpty()) {
                     // 1. UI에 메시지를 즉시 추가 (보낸 사람의 메시지로 추가)
-                    chat_user currentMessage = new chat_user(chat_id, chatroom_name, user_id, 0, fan_image, fan_nickname, sending_message, changeFormattedTime(getCurrentTime()));
+                    chat_user currentMessage = new chat_user(chat_id, chatroom_name, user_id, 1, artist_image, artist_nickname, sending_message, changeFormattedTime(getCurrentTime()));
                     // 작성 유저의 화면에 바로 보일 수 있도록 리스트에 추가
                     messages.add(currentMessage);
                     // 포지션은 0부터 시작하기 때문에 전체 크기의 -1을 해준다.
                     adapter.notifyItemInserted(messages.size() - 1);
-                    scrollToBottom();
+                    scrollToBottom(); // 스크롤 마지막으로 이동
 
                     // 2. chat_user 객체를 JSON 문자열로 변환
                     JSONObject jsonMessage = new JSONObject();
@@ -205,33 +199,24 @@ public class FanChatActivity extends AppCompatActivity  {
                         e.printStackTrace();
                     }
 
-
                     // 3. 서버에 JSON 형태 메시지를 전송
                     sendMessageToService(jsonMessage.toString());
 
-                    Log.i(TAG, "보내기 전 데이터 확인 : " + jsonMessage);
-
-                    // 4. 전송 후 입력창 비우기
-                    et_chat_message.setText("");
+                    et_artist_chat_message.setText(""); // 메시지 입력창 초기화
                 }
             }
         });
 
-        iv_fan_chat_back_btn.setOnClickListener(new View.OnClickListener() {
+        iv_artist_chat_back_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                finish();
-            }
-        });
-
-        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
-            @Override
-            public void handleOnBackPressed() {
+                Intent intent = new Intent(getApplicationContext(), ChatsActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
                 finish();
             }
         });
     }
-
 
     private String getCurrentTime() {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
@@ -261,7 +246,94 @@ public class FanChatActivity extends AppCompatActivity  {
         return formattedTime;
     }
 
+    // 서버로부터 메시지를 수신했을 때 처리하는 메서드
+    public void onMessageReceived(String message) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                // 서버로부터 받은 메시지를 UI에 표시
 
+                // 메시지를 어댑터에 추가
+
+                chat_user current_artist = new chat_user(chat_id, chatroom_name, sender_id, is_artist, image, nickname, message, sent_time);
+                messages.add(current_artist);
+                adapter.notifyDataSetChanged();
+
+                // 새로운 메시지를 받은 후 스크롤을 마지막으로 이동
+                scrollToBottom();            }
+        });
+    }
+
+
+    // BroadcastReceiver 구현
+    // 서버로부터 메시지 수신하면 사용
+    private BroadcastReceiver messageReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String message = intent.getStringExtra("message");
+            Log.i(TAG, "Received message: " + message);
+
+            // String -> Json 객체로 변환 후에 각 값을 변수에 저장
+            // 2. chat_user 객체를 JSON 문자열로 변환
+
+            try {
+                JSONObject received_Message = new JSONObject(message);
+                int received_chat_id = received_Message.getInt("chat_id");
+                String received_chatroom_name = received_Message.getString("chatroom_name");
+                int received_sender_id = received_Message.getInt("sender_id");
+                int received_is_artist = received_Message.getInt("is_artist");
+                String received_image = received_Message.getString("image");
+                String received_nickname = received_Message.getString("nickname");
+                String received_message = received_Message.getString("message");
+                String received_sent_time = received_Message.getString("sent_time");
+
+                System.out.println("received_image : " + received_image);
+
+                if (received_image == null || received_image.isEmpty()){
+                    received_image = "";
+                }
+
+                // UI 업데이트 처리
+                chat_user received_user = new chat_user
+                        (received_chat_id, received_chatroom_name, received_sender_id, received_is_artist, received_image, received_nickname, received_message, changeFormattedTime(received_sent_time));
+                messages.add(received_user);
+
+                if (adapter != null) {
+                    adapter.notifyDataSetChanged();
+                }
+
+                // 새로운 메시지를 받은 후 스크롤을 마지막으로 이동
+                scrollToBottom();
+            } catch (JSONException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    };
+
+
+    // 서비스로 메시지를 보내는 메서드
+    private void sendMessageToService(String message) {
+        if (isBound && chatService != null) {
+            chatService.sendMessageToServer(message);
+        } else {
+            Log.i(TAG, "서비스에 연결되지 않았습니다.");
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        // 서비스 바인딩 해제
+        if (isBound) {
+            unbindService(serviceConnection);
+            isBound = false;
+        }
+    }
+
+    // 메시지가 추가될 때 RecyclerView의 스크롤을 마지막으로 설정
+    private void scrollToBottom() {
+        recyclerView.scrollToPosition(adapter.getItemCount() - 1);
+    }
 
     private void fetchChatData() {
         // 기존 DB에서 데이터를 불러오는 로직
@@ -286,12 +358,11 @@ public class FanChatActivity extends AppCompatActivity  {
                         chat_user user = data.get(i);
                         chat_id = user.getChat_id();
                         chatroom_name = user.getChatroom_name();
-                        tv_fan_chat_room_name.setText(chatroom_name);
+                        tv_artist_chat_room_name.setText(chatroom_name);
                         sender_id = user.getSender_id();
                         is_artist = user.getIs_artist();
 
                         image = user.getImage();
-
                         System.out.println("image == null 밖" + i);
                         if (image == null || image.isEmpty()){
                             System.out.println("image == null 안" + i);
@@ -301,28 +372,29 @@ public class FanChatActivity extends AppCompatActivity  {
                         message = user.getMessage();
                         sent_time = user.getSent_time();
 
+// 원래 형식의 시간 파싱을 위한 SimpleDateFormat
+                        SimpleDateFormat originalFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
+                        // 원하는 형식으로 변환하기 위한 SimpleDateFormat
+                        SimpleDateFormat newFormat = new SimpleDateFormat("yyyy년 MM월 dd일 EEEE");
 
+                        try {
+                            // 문자열을 Date 객체로 파싱
+                            Date date = originalFormat.parse(sent_time);
 
-//                        // 원래 형식의 시간 파싱을 위한 SimpleDateFormat
-//                        SimpleDateFormat originalFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-//
-//                        // 원하는 형식으로 변환하기 위한 SimpleDateFormat
-//                        SimpleDateFormat newFormat = new SimpleDateFormat("hh:mm");
-//
-//                        try {
-//                            // 문자열을 Date 객체로 파싱
-//                            Date date = originalFormat.parse(sent_time);
-//
-//                            // Date 객체를 새로운 형식으로 포맷
-//                            formattedTime = newFormat.format(date);
-//
-//                            // 포맷된 시간 출력
-//                            System.out.println("Formatted Time: " + formattedTime);
-//                        } catch (ParseException e) {
-//                            e.printStackTrace();
-//                        }
+                            // Date 객체를 새로운 형식으로 포맷
+                            formattedTime = newFormat.format(date);
 
+                            // 포맷된 시간 출력
+                            System.out.println("Formatted Time: " + formattedTime);
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
+
+                        if (!lastDate.equals(formattedTime)) {
+                            messages.add(new chat_user(2, formattedTime));
+                            lastDate = formattedTime;
+                        }
 
                         if (is_artist == 0) {
                             if (currentUser == null) {
@@ -344,6 +416,7 @@ public class FanChatActivity extends AppCompatActivity  {
                         }
                     }
                     adapter.notifyDataSetChanged();
+
                     scrollToBottom();
 
                     // 성공적으로 데이터를 가져왔을 때 서비스에 메시지 전송
@@ -354,25 +427,14 @@ public class FanChatActivity extends AppCompatActivity  {
                         // 필요한 경우 서비스가 null일 때의 처리
                     }
 
-
-//                    if (isBound && chatService != null) {
-//                        try {
-//                            JSONObject userData = new JSONObject();
-//                            userData.put("chat_id : 어디냐 0", chat_id);
-//                            sendMessageToService(userData.toString());
-//                        } catch (JSONException e) {
-//                            e.printStackTrace();
-//                        }
-//                    }
-
                 } else {
-                    Toast.makeText(FanChatActivity.this, "Error: " + response.code(), Toast.LENGTH_LONG).show();
+                    Toast.makeText(ArtistChatActivity.this, "Error: " + response.code(), Toast.LENGTH_LONG).show();
                 }
             }
 
             @Override
             public void onFailure(Call<ArrayList<chat_user>> call, Throwable t) {
-                Toast.makeText(FanChatActivity.this, "Failure: " + t.getMessage(), Toast.LENGTH_LONG).show();
+                Toast.makeText(ArtistChatActivity.this, "Failure: " + t.getMessage(), Toast.LENGTH_LONG).show();
                 Log.i(TAG, "onFailure: " + t.getMessage());
             }
         });
@@ -427,11 +489,11 @@ public class FanChatActivity extends AppCompatActivity  {
 
                                 if (user_data.getInt("result") == 1) {
                                     if (user_data.getString("image").isEmpty() || user_data.isNull("image")) {
-                                        fan_image = "";
+                                        artist_image = null;
                                     }else{
-                                        fan_image = user_data.getString("image");
+                                        artist_image = user_data.getString("image");
                                     }
-                                    fan_nickname = user_data.getString("nickname");
+                                    artist_nickname = user_data.getString("nickname");
                                     Log.i(TAG, "유저 닉네임 : " + nickname);
 
                                 } else {
@@ -449,79 +511,5 @@ public class FanChatActivity extends AppCompatActivity  {
                 });
             }
         });
-    }
-
-
-    // BroadcastReceiver 구현
-    // 서버로부터 메시지 수신하면 사용
-    private BroadcastReceiver messageReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            String message = intent.getStringExtra("message");
-            Log.i(TAG, "Received message: " + message);
-
-            // String -> Json 객체로 변환 후에 각 값을 변수에 저장
-            // 2. chat_user 객체를 JSON 문자열로 변환
-
-            try {
-                JSONObject received_Message = new JSONObject(message);
-                int received_chat_id = received_Message.getInt("chat_id");
-                String received_chatroom_name = received_Message.getString("chatroom_name");
-                int received_sender_id = received_Message.getInt("sender_id");
-                int received_is_artist = received_Message.getInt("is_artist");
-                String received_image = received_Message.getString("image");
-                String received_nickname = received_Message.getString("nickname");
-                String received_message = received_Message.getString("message");
-                String received_sent_time = received_Message.getString("sent_time");
-
-                if (received_image == null || received_image.isEmpty()){
-                    received_image = "";
-                }
-
-                // UI 업데이트 처리
-                chat_user received_user = new chat_user
-                        (received_chat_id, received_chatroom_name, received_sender_id, received_is_artist, received_image, received_nickname, received_message, changeFormattedTime(received_sent_time));
-                messages.add(received_user);
-
-                if (adapter != null) {
-                    adapter.notifyDataSetChanged();
-                }
-
-                // 새로운 메시지를 받은 후 스크롤을 마지막으로 이동
-                scrollToBottom();
-            } catch (JSONException e) {
-                throw new RuntimeException(e);
-            }
-        }
-    };
-
-
-
-
-    // 서비스로 메시지를 보내는 메서드
-    private void sendMessageToService(String message) {
-        if (isBound && chatService != null) {
-            chatService.sendMessageToServer(message);
-        } else {
-            Log.i(TAG, "서비스에 연결되지 않았습니다.");
-        }
-    }
-
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        // 서비스 바인딩 해제
-        if (isBound) {
-            unbindService(serviceConnection);
-            isBound = false;
-        }
-        // BroadcastReceiver 해제
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(messageReceiver);
-    }
-
-    // 메시지가 추가될 때 RecyclerView의 스크롤을 마지막으로 설정
-    private void scrollToBottom() {
-        recyclerView.scrollToPosition(adapter.getItemCount() - 1);
     }
 }

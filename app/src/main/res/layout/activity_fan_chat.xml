@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
-    tools:context=".FanChatActivity">
+    tools:context=".ui.FanChatActivity">
 
     <LinearLayout
         android:id="@+id/fan_chat_linear"

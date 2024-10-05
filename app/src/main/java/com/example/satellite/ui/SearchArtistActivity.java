@@ -1,4 +1,4 @@
-package com.example.satellite;
+package com.example.satellite.ui;
 
 import android.content.Context;
 import android.content.Intent;
@@ -18,6 +18,12 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.satellite.ApiService;
+import com.example.satellite.R;
+import com.example.satellite.RetrofitClientInstance;
+import com.example.satellite.adapter.MyAdapter;
+import com.example.satellite.model.home_user;
 
 import java.util.ArrayList;
 

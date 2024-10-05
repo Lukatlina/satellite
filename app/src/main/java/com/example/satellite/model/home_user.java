@@ -1,4 +1,4 @@
-package com.example.satellite;
+package com.example.satellite.model;
 
 public class home_user {
 

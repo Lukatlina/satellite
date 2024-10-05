@@ -1,4 +1,4 @@
-package com.example.satellite;
+package com.example.satellite.ui;
 
 import android.app.Dialog;
 import android.content.Context;
@@ -22,6 +22,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.bumptech.glide.Glide;
+import com.example.satellite.R;
 
 import java.io.IOException;
 
@@ -35,7 +36,7 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 public class ArtistProfileActivity extends AppCompatActivity {
-    String TAG = "ArtistProfileActivity";
+    private static final String TAG = "ArtistProfileActivity";
 
     ImageView iv_artist_profile_close_btn;
     ImageView iv_artist_profile_more_btn;
@@ -141,6 +142,7 @@ public class ArtistProfileActivity extends AppCompatActivity {
                     // 채팅방 식별을 위한 아티스트 고유 ID
                     intent.putExtra("artist_id", artist_id);
                     startActivity(intent);
+                    finish();
                 } else if (usertype == 3) {
                     // 클릭시 아티스트가 내 planet리스트에 포함됨.
                     addArtistToMyList();

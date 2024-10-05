@@ -5,7 +5,7 @@
     android:id="@+id/my_profile"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MyProfileActivity">
+    tools:context=".ui.MyProfileActivity">
 
     <ImageView
         android:id="@+id/iv_close_btn"

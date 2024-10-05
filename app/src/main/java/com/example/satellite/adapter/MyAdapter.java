@@ -1,4 +1,4 @@
-package com.example.satellite;
+package com.example.satellite.adapter;
 
 import android.content.Context;
 import android.content.Intent;
@@ -13,6 +13,11 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.example.satellite.ui.ArtistProfileActivity;
+import com.example.satellite.ui.LoginActivity;
+import com.example.satellite.ui.MyProfileActivity;
+import com.example.satellite.R;
+import com.example.satellite.model.home_user;
 
 import java.util.ArrayList;
 

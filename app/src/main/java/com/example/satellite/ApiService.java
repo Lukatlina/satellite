@@ -1,5 +1,10 @@
 package com.example.satellite;
 
+import com.example.satellite.model.ChatRoom;
+import com.example.satellite.model.WithdrawRequest;
+import com.example.satellite.model.chat_user;
+import com.example.satellite.model.home_user;
+
 import java.util.ArrayList;
 
 import retrofit2.Call;
@@ -27,4 +32,9 @@ public interface ApiService {
     Call<ArrayList<chat_user>> sendChatImformaition(@Field("user_id")  int user_id,
                                                     @Field("is_artist") int is_artist,
                                                     @Field("artist_id") int artist_id);
+
+    @FormUrlEncoded
+    @POST("satellite/load_chatroom.php")
+    Call<ArrayList<ChatRoom>> sendChatroomsImformation(@Field("user_id")  int user_id,
+                                                       @Field("is_artist") int is_artist);
 }
