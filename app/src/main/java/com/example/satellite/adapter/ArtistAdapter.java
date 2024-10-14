@@ -1,6 +1,7 @@
 package com.example.satellite.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,17 +14,19 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.example.satellite.R;
 import com.example.satellite.model.chat_user;
+import com.example.satellite.ui.MessageBoxActivity;
 
 import java.util.ArrayList;
 
 public class ArtistAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private static final int VIEW_TYPE_SENDER = 0;
     private static final int VIEW_TYPE_RECEIVER = 1;
+    private static final int VIEW_TYPE_HEADER= 2;
 
     private ArrayList<chat_user> chatMessages;
     private Context context;
 
-    String TAG = "ChatAdapter";
+    String TAG = "ArtistChatAdapter";
 
     public ArtistAdapter(ArrayList<chat_user> chatMessages, Context context) {
         this.chatMessages = chatMessages;
@@ -33,12 +36,15 @@ public class ArtistAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     @Override
     public int getItemViewType(int position) {
         chat_user message = chatMessages.get(position);
-        if (message.getIs_artist() == 1) { // 보내는 사람 / 유저 메시지일 때
-            Log.i(TAG, "getItemViewType: VIEW_TYPE_ARTIST");
+        if (message.getUsertype() == 0) { // 보내는 사람 / 유저 메시지일 때
+            Log.i(TAG, "getItemViewType: VIEW_TYPE_ARTIST : " + message.getIs_artist());
             return VIEW_TYPE_SENDER;
-        } else { // 받는 사람 / 아티스트 메시지일 때
-            Log.i(TAG, "getItemViewType: VIEW_TYPE_USER");
+        } else if (message.getUsertype() == 1) { // 받는 사람 / 아티스트 메시지일 때
+            Log.i(TAG, "getItemViewType: VIEW_TYPE_USER : " + message.getIs_artist());
             return VIEW_TYPE_RECEIVER;
+        } else {
+            Log.i(TAG, "getItemViewType: VIEW_TYPE_HEADER : " + message.getIs_artist());
+            return VIEW_TYPE_HEADER;
         }
     }
 
@@ -48,12 +54,17 @@ public class ArtistAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
         if (viewType == VIEW_TYPE_SENDER) {
             View view = inflater.inflate(R.layout.item_chat_sender, parent, false);
-            Log.i(TAG, "onCreateViewHolder: VIEW_TYPE_SENDER");
+            Log.i(TAG, "onCreateViewHolder: item_chat_sender");
             return new SenderViewHolder(view);
-        } else {
-            View view = inflater.inflate(R.layout.item_chat_receiver, parent, false);
-            Log.i(TAG, "onCreateViewHolder: item_chat_receiver");
+        } else if (viewType == VIEW_TYPE_RECEIVER) {
+            // 팬들의 메시지를 하나로 묶어 보여주기 위한 메시지함
+            View view = inflater.inflate(R.layout.item_chat_fan_message_box, parent, false);
+            Log.i(TAG, "onCreateViewHolder: item_chat_fan_message_box");
             return new ReceiverViewHolder(view);
+        } else {
+            View view = inflater.inflate(R.layout.item_date_header, parent, false);
+            Log.i(TAG, "onCreateViewHolder: item_date_header");
+            return new HeaderViewHolder(view);
         }
     }
 
@@ -65,7 +76,9 @@ public class ArtistAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             ((SenderViewHolder) holder).bind(chatMessage.getMessage(), chatMessage.getSent_time());
         } else if (holder instanceof ReceiverViewHolder) {
             Log.i(TAG, "onBindViewHolder: ReceiverViewHolder");
-            ((ReceiverViewHolder) holder).bind(chatMessage.getMessage(),chatMessage.getNickname(), chatMessage.getImage(), chatMessage.getSent_time());
+        } else if (holder instanceof HeaderViewHolder) {
+            Log.i(TAG, "onBindViewHolder: HeaderViewHolder");
+            ((HeaderViewHolder) holder).bind(chatMessage.getSent_time());
         }
     }
 
@@ -92,30 +105,45 @@ public class ArtistAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     }
 
     class ReceiverViewHolder extends RecyclerView.ViewHolder {
-        ImageView iv_receiver_profile_image;
-        TextView tv_receiver_user_nickname;
-        TextView tv_receiver_message;
-        TextView tv_receiver_message_time;
 
         public ReceiverViewHolder(View itemView) {
             super(itemView);
-            iv_receiver_profile_image = itemView.findViewById(R.id.iv_receiver_profile_image);
-            tv_receiver_user_nickname = itemView.findViewById(R.id.tv_receiver_user_nickname);
-            tv_receiver_message = itemView.findViewById(R.id.tv_receiver_message);
-            tv_receiver_message_time = itemView.findViewById(R.id.tv_receiver_message_time);
-        }
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Log.i(TAG, "메시지함 클릭");
+                    int position = getAdapterPosition();
+                    if (position != RecyclerView.NO_POSITION) {
+                        chat_user clickedItem = chatMessages.get(position);
+                        Intent intent = new Intent(context, MessageBoxActivity.class);
 
-        void bind(String message, String nickname, String profileImage, String sent_time) {
-            tv_receiver_message.setText(message);
-            tv_receiver_message_time.setText(sent_time);
-            tv_receiver_user_nickname.setText(nickname);
-            if (profileImage != null && !profileImage.isEmpty()) {
-                Glide.with(context).load(profileImage).circleCrop().into(iv_receiver_profile_image);
-            }else{
-                iv_receiver_profile_image.setImageResource(R.drawable.baseline_person_60);
-            }
+                        Log.i(TAG, "눌려서 값이 보이나 chat_id?" + clickedItem.getChat_id());
+                        Log.i(TAG, "눌려서 값이 보이나 message_id?" + clickedItem.getMessage_id());
+
+                        intent.putExtra("chat_id", clickedItem.getChat_id());
+                        intent.putExtra("message_id", clickedItem.getMessage_id());
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        context.startActivity(intent);
+                    }
+                }
+            });
         }
     }
+
+    class HeaderViewHolder extends RecyclerView.ViewHolder {
+        TextView dateTime;
+
+
+        public HeaderViewHolder(View itemView) {
+            super(itemView);
+            dateTime = itemView.findViewById(R.id.dateTextView);
+        }
+
+        void bind(String sentTime) {
+            dateTime.setText(sentTime);
+        }
+    }
+
 }
 
 

@@ -23,7 +23,6 @@ public class ChatService extends Service {
     private BufferedReader in;
     private PrintWriter out;
     private boolean isRunning;
-    private MessageListener messageListener;
 
     // 서비스 바인더 정의
     private final IBinder binder = new LocalBinder();
@@ -40,14 +39,6 @@ public class ChatService extends Service {
         Log.i(TAG, "onCreate: 시작");
         isRunning = true;
         new Thread(this::connectToServer).start(); // 서버 연결 스레드를 시작
-    }
-
-    public interface MessageListener {
-        void onMessageReceived(String message);
-    }
-
-    public void setMessageListener(MessageListener listener) {
-        this.messageListener = listener;
     }
 
     @Override

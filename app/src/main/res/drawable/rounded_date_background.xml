@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- res/drawable/rounded_date_background.xml -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+
+    <!-- 둥근 모서리 설정 -->
+    <corners android:radius="16dp" />
+
+    <!-- 배경색 설정 (반투명 회색) -->
+    <solid android:color="#80E0E0E0" />
+
+    <!-- 패딩 설정 -->
+    <padding
+        android:left="8dp"
+        android:right="8dp"
+        android:top="4dp"
+        android:bottom="4dp" />
+
+</shape>

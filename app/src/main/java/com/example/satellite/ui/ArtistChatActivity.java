@@ -80,12 +80,14 @@ public class ArtistChatActivity extends AppCompatActivity {
 
     ArrayList<chat_user> messages = new ArrayList<>();
 
-    chat_user currentUser;
+//    chat_user currentUser;
 
     String artist_image;
     String artist_nickname;
 
+    chat_user currentUser;
     int chat_id;
+    int message_id;
     String chatroom_name;
     int sender_id;
     int is_artist;
@@ -93,6 +95,7 @@ public class ArtistChatActivity extends AppCompatActivity {
     String nickname;
     String message;
     String sent_time;
+    int fan_message_count;
     String formattedTime;
     String lastDate = "";
 
@@ -177,7 +180,7 @@ public class ArtistChatActivity extends AppCompatActivity {
                 String sending_message = et_artist_chat_message.getText().toString().trim();
                 if (!sending_message.isEmpty()) {
                     // 1. UI에 메시지를 즉시 추가 (보낸 사람의 메시지로 추가)
-                    chat_user currentMessage = new chat_user(chat_id, chatroom_name, user_id, 1, artist_image, artist_nickname, sending_message, changeFormattedTime(getCurrentTime()));
+                    chat_user currentMessage = new chat_user(0, chat_id, chatroom_name, user_id, 1, artist_image, artist_nickname, sending_message, changeFormattedTime(getCurrentTime()));
                     // 작성 유저의 화면에 바로 보일 수 있도록 리스트에 추가
                     messages.add(currentMessage);
                     // 포지션은 0부터 시작하기 때문에 전체 크기의 -1을 해준다.
@@ -246,25 +249,6 @@ public class ArtistChatActivity extends AppCompatActivity {
         return formattedTime;
     }
 
-    // 서버로부터 메시지를 수신했을 때 처리하는 메서드
-    public void onMessageReceived(String message) {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                // 서버로부터 받은 메시지를 UI에 표시
-
-                // 메시지를 어댑터에 추가
-
-                chat_user current_artist = new chat_user(chat_id, chatroom_name, sender_id, is_artist, image, nickname, message, sent_time);
-                messages.add(current_artist);
-                adapter.notifyDataSetChanged();
-
-                // 새로운 메시지를 받은 후 스크롤을 마지막으로 이동
-                scrollToBottom();            }
-        });
-    }
-
-
     // BroadcastReceiver 구현
     // 서버로부터 메시지 수신하면 사용
     private BroadcastReceiver messageReceiver = new BroadcastReceiver() {
@@ -279,24 +263,12 @@ public class ArtistChatActivity extends AppCompatActivity {
             try {
                 JSONObject received_Message = new JSONObject(message);
                 int received_chat_id = received_Message.getInt("chat_id");
-                String received_chatroom_name = received_Message.getString("chatroom_name");
-                int received_sender_id = received_Message.getInt("sender_id");
-                int received_is_artist = received_Message.getInt("is_artist");
-                String received_image = received_Message.getString("image");
-                String received_nickname = received_Message.getString("nickname");
-                String received_message = received_Message.getString("message");
-                String received_sent_time = received_Message.getString("sent_time");
+                int received_message_id = received_Message.getInt("message_id");
 
-                System.out.println("received_image : " + received_image);
-
-                if (received_image == null || received_image.isEmpty()){
-                    received_image = "";
+                chat_user last_message = messages.get(messages.size() - 1);
+                if (last_message.getUsertype() != 1) {
+                    messages.add(new chat_user(1, received_chat_id, received_message_id, 0));
                 }
-
-                // UI 업데이트 처리
-                chat_user received_user = new chat_user
-                        (received_chat_id, received_chatroom_name, received_sender_id, received_is_artist, received_image, received_nickname, received_message, changeFormattedTime(received_sent_time));
-                messages.add(received_user);
 
                 if (adapter != null) {
                     adapter.notifyDataSetChanged();
@@ -339,7 +311,7 @@ public class ArtistChatActivity extends AppCompatActivity {
         // 기존 DB에서 데이터를 불러오는 로직
         // 유저의 정보와 아티스트 여부, 아티스트 id를 가지고 기존의 DB에서 데이터를 불러온다.
         ApiService service = RetrofitClientInstance.getRetrofitInstance().create(ApiService.class);
-        Call<ArrayList<chat_user>> call = service.sendChatImformaition(user_id, is_artist, artist_id);
+        Call<ArrayList<chat_user>> call = service.sendArtistChatImformaition(user_id, is_artist, artist_id);
 
         call.enqueue(new Callback<ArrayList<chat_user>>() {
             @Override
@@ -357,6 +329,7 @@ public class ArtistChatActivity extends AppCompatActivity {
                     for (int i = 0; i < data.size(); i++) {
                         chat_user user = data.get(i);
                         chat_id = user.getChat_id();
+                        message_id = user.getMessage_id();
                         chatroom_name = user.getChatroom_name();
                         tv_artist_chat_room_name.setText(chatroom_name);
                         sender_id = user.getSender_id();
@@ -371,8 +344,9 @@ public class ArtistChatActivity extends AppCompatActivity {
                         nickname = user.getNickname();
                         message = user.getMessage();
                         sent_time = user.getSent_time();
+                        fan_message_count = user.getFan_message_count();
 
-// 원래 형식의 시간 파싱을 위한 SimpleDateFormat
+                        // 원래 형식의 시간 파싱을 위한 SimpleDateFormat
                         SimpleDateFormat originalFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
                         // 원하는 형식으로 변환하기 위한 SimpleDateFormat
@@ -396,23 +370,11 @@ public class ArtistChatActivity extends AppCompatActivity {
                             lastDate = formattedTime;
                         }
 
-                        if (is_artist == 0) {
-                            if (currentUser == null) {
-                                currentUser = new chat_user(chat_id, chatroom_name, sender_id, is_artist, image, nickname, message, changeFormattedTime(sent_time));
-                            }
-                            messages.add(new chat_user(chat_id, chatroom_name, sender_id, is_artist, image, nickname, message, changeFormattedTime(sent_time)));
-                            Log.i(TAG, "팬 메시지 추가 : " + nickname);
-                        } else {
-                            messages.add(new chat_user(chat_id, chatroom_name, sender_id, is_artist, image, nickname, message, changeFormattedTime(sent_time)));
-                            Log.i(TAG, "아티스트 메시지 추가 : " + nickname);
-                            Log.i(TAG, "아티스트의 chat_id 확인 : " + chatroom_name);
-                            Log.i(TAG, "아티스트의 sender_id 확인 : " + sender_id);
-                            Log.i(TAG, "아티스트의 is_artist 확인 : " + is_artist);
-                            Log.i(TAG, "아티스트의 image 확인 : " + image);
-                            Log.i(TAG, "아티스트의 nickname 확인 : " + nickname);
-                            Log.i(TAG, "아티스트의 message 확인 : " + message);
-                            Log.i(TAG, "아티스트의 sent_time 확인 : " + formattedTime);
-                            Log.i(TAG, "messages size: " + messages.size());
+                        messages.add(new chat_user(0, chat_id, chatroom_name, sender_id, is_artist, image, nickname, message, changeFormattedTime(sent_time)));
+
+                        if (fan_message_count != 0) {
+                            messages.add(new chat_user(1, chat_id, message_id, 0));
+                            Log.i(TAG, "메시지함 추가 : " + message_id);
                         }
                     }
                     adapter.notifyDataSetChanged();

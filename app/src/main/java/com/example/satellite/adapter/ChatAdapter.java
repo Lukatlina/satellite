@@ -19,6 +19,7 @@ import java.util.ArrayList;
 public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private static final int VIEW_TYPE_SENDER = 0;
     private static final int VIEW_TYPE_RECEIVER = 1;
+    private static final int VIEW_TYPE_HEADER= 2;
 
     private ArrayList<chat_user> chatMessages;
     private Context context;
@@ -33,12 +34,15 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     @Override
     public int getItemViewType(int position) {
         chat_user message = chatMessages.get(position);
-        if (message.getIs_artist() == 0) { // 보내는 사람 / 유저 메시지일 때
-            Log.i(TAG, "getItemViewType: VIEW_TYPE_USER");
+        if (message.getUsertype() == 0) { // 보내는 사람
+            Log.i(TAG, "getItemViewType: VIEW_TYPE_USER : " + message.getUsertype());
             return VIEW_TYPE_SENDER;
-        } else { // 받는 사람 / 아티스트 메시지일 때
-            Log.i(TAG, "getItemViewType: VIEW_TYPE_ARTIST");
+        } else if (message.getUsertype() == 1) { // 받는 사람
+            Log.i(TAG, "getItemViewType: VIEW_TYPE_ARTIST : " + message.getUsertype());
             return VIEW_TYPE_RECEIVER;
+        } else {
+            Log.i(TAG, "getItemViewType: VIEW_TYPE_HEADER : " + message.getUsertype());
+            return VIEW_TYPE_HEADER;
         }
     }
 
@@ -50,10 +54,14 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             View view = inflater.inflate(R.layout.item_chat_sender, parent, false);
             Log.i(TAG, "onCreateViewHolder: VIEW_TYPE_SENDER");
             return new SenderViewHolder(view);
-        } else {
+        } else if (viewType == VIEW_TYPE_RECEIVER) {
             View view = inflater.inflate(R.layout.item_chat_receiver, parent, false);
             Log.i(TAG, "onCreateViewHolder: item_chat_receiver");
             return new ReceiverViewHolder(view);
+        } else {
+            View view = inflater.inflate(R.layout.item_date_header, parent, false);
+            Log.i(TAG, "onCreateViewHolder: item_date_header");
+            return new HeaderViewHolder(view);
         }
     }
 
@@ -66,6 +74,9 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         } else if (holder instanceof ReceiverViewHolder) {
             Log.i(TAG, "onBindViewHolder: ReceiverViewHolder");
             ((ReceiverViewHolder) holder).bind(chatMessage.getMessage(),chatMessage.getNickname(), chatMessage.getImage(), chatMessage.getSent_time());
+        } else if (holder instanceof HeaderViewHolder) {
+            Log.i(TAG, "onBindViewHolder: HeaderViewHolder");
+            ((HeaderViewHolder) holder).bind(chatMessage.getSent_time());
         }
     }
 
@@ -114,6 +125,20 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             }else{
                 iv_receiver_profile_image.setImageResource(R.drawable.baseline_person_60);
             }
+        }
+    }
+
+    class HeaderViewHolder extends RecyclerView.ViewHolder {
+        TextView dateTime;
+
+
+        public HeaderViewHolder(View itemView) {
+            super(itemView);
+            dateTime = itemView.findViewById(R.id.dateTextView);
+        }
+
+        void bind(String sentTime) {
+            dateTime.setText(sentTime);
         }
     }
 }

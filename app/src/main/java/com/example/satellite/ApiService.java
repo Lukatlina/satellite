@@ -34,6 +34,17 @@ public interface ApiService {
                                                     @Field("artist_id") int artist_id);
 
     @FormUrlEncoded
+    @POST("satellite/load_artist_chat_message.php")
+    Call<ArrayList<chat_user>> sendArtistChatImformaition(@Field("user_id")  int user_id,
+                                                          @Field("is_artist") int is_artist,
+                                                          @Field("artist_id") int artist_id);
+
+    @FormUrlEncoded
+    @POST("satellite/load_fan_chat_message.php")
+    Call<ArrayList<chat_user>> sendFanChatImformaition(@Field("chat_id")  int chat_id,
+                                                       @Field("message_id") int message_id);
+
+    @FormUrlEncoded
     @POST("satellite/load_chatroom.php")
     Call<ArrayList<ChatRoom>> sendChatroomsImformation(@Field("user_id")  int user_id,
                                                        @Field("is_artist") int is_artist);
