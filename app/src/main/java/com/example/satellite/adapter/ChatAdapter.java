@@ -1,6 +1,11 @@
 package com.example.satellite.adapter;
 
 import android.content.Context;
+import android.graphics.Color;
+import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.style.BackgroundColorSpan;
+import android.text.style.ForegroundColorSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,7 +19,10 @@ import com.bumptech.glide.Glide;
 import com.example.satellite.R;
 import com.example.satellite.model.chat_user;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private static final int VIEW_TYPE_SENDER = 0;
@@ -23,12 +31,18 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private ArrayList<chat_user> chatMessages;
     private Context context;
+    private String query = "";
 
     String TAG = "ChatAdapter";
 
     public ChatAdapter(ArrayList<chat_user> chatMessages, Context context) {
         this.chatMessages = chatMessages;
         this.context = context;
+    }
+
+    // 검색어 설정 메서드
+    public void setQuery(String query) {
+        this.query = query != null ? query.toLowerCase() : ""; // 소문자로 변환하여 저장
     }
 
     @Override
@@ -70,10 +84,10 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         chat_user chatMessage = chatMessages.get(position);
         if (holder instanceof SenderViewHolder) {
             Log.i(TAG, "onBindViewHolder: SenderViewHolder");
-            ((SenderViewHolder) holder).bind(chatMessage.getMessage(), chatMessage.getSent_time());
+            ((SenderViewHolder) holder).bind(chatMessage.getMessage(), chatMessage.getSent_time(), query);
         } else if (holder instanceof ReceiverViewHolder) {
             Log.i(TAG, "onBindViewHolder: ReceiverViewHolder");
-            ((ReceiverViewHolder) holder).bind(chatMessage.getMessage(),chatMessage.getNickname(), chatMessage.getImage(), chatMessage.getSent_time());
+            ((ReceiverViewHolder) holder).bind(chatMessage.getMessage(),chatMessage.getNickname(), chatMessage.getImage(), chatMessage.getSent_time(), query);
         } else if (holder instanceof HeaderViewHolder) {
             Log.i(TAG, "onBindViewHolder: HeaderViewHolder");
             ((HeaderViewHolder) holder).bind(chatMessage.getSent_time());
@@ -96,9 +110,23 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             tv_sender_message_time = itemView.findViewById(R.id.tv_sender_message_time);
         }
 
-        void bind(String message, String sentTime) {
-            tvUserMessage.setText(message);
-            tv_sender_message_time.setText(sentTime);
+        void bind(String message, String sentTime, String query) {
+            // 검색어를 포함하는 메시지 강조
+            SpannableString spannableString = new SpannableString(message);
+            if (query != null && !query.isEmpty() && message != null && message.toLowerCase().contains(query)) {
+                int startIndex = message.toLowerCase().indexOf(query);
+                int endIndex = startIndex + query.length();
+
+                spannableString.setSpan(new BackgroundColorSpan(Color.BLACK), startIndex, endIndex, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                spannableString.setSpan(new ForegroundColorSpan(Color.WHITE), startIndex, endIndex, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+                tvUserMessage.setText(spannableString);
+            } else {
+                // 검색어가 없으면 일반 텍스트로 표시
+                tvUserMessage.setText(message);
+            }
+
+            tv_sender_message_time.setText(changeFormattedTime(sentTime));
         }
     }
 
@@ -116,9 +144,19 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             tv_receiver_message_time = itemView.findViewById(R.id.tv_receiver_message_time);
         }
 
-        void bind(String message, String nickname, String profileImage, String sent_time) {
-            tv_receiver_message.setText(message);
-            tv_receiver_message_time.setText(sent_time);
+        void bind(String message, String nickname, String profileImage, String sent_time, String query) {
+            SpannableString spannableString = new SpannableString(message);
+            if (query != null && !query.isEmpty() && message != null && message.toLowerCase().contains(query)) {
+                int startIndex = message.toLowerCase().indexOf(query);
+                int endIndex = startIndex + query.length();
+                spannableString.setSpan(new BackgroundColorSpan(Color.BLACK), startIndex, endIndex, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                spannableString.setSpan(new ForegroundColorSpan(Color.WHITE), startIndex, endIndex, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                tv_receiver_message.setText(spannableString);
+            } else {
+                tv_receiver_message.setText(message);  // 검색어가 없으면 일반 텍스트로 표시
+            }
+
+            tv_receiver_message_time.setText(changeFormattedTime(sent_time));
             tv_receiver_user_nickname.setText(nickname);
             if (profileImage != null && !profileImage.isEmpty()) {
                 Glide.with(context).load(profileImage).circleCrop().into(iv_receiver_profile_image);
@@ -140,5 +178,28 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         void bind(String sentTime) {
             dateTime.setText(sentTime);
         }
+    }
+
+    private String changeFormattedTime(String sent_time) {
+        // 원래 형식의 시간 파싱을 위한 SimpleDateFormat
+        SimpleDateFormat originalFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+        // 원하는 형식으로 변환하기 위한 SimpleDateFormat
+        SimpleDateFormat newFormat = new SimpleDateFormat("HH:mm");
+
+        // 문자열을 Date 객체로 파싱
+        Date date = null;
+        try {
+            date = originalFormat.parse(sent_time);
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
+        }
+
+        // Date 객체를 새로운 형식으로 포맷
+        String formattedTime = newFormat.format(date);
+
+        // 포맷된 시간 출력
+        System.out.println("changeFormattedTime: " + formattedTime);
+        return formattedTime;
     }
 }

@@ -17,22 +17,49 @@
         android:paddingTop="3dp"
         android:drawableTop="@drawable/baseline_person_60"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/btn_more_chats"
+        app:layout_constraintEnd_toStartOf="@+id/fl_more_chats"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <android.widget.Button
-        android:id="@+id/btn_more_chats"
-        style="@style/navigation_btn"
+    <FrameLayout
+        android:id="@+id/fl_more_chats"
         android:layout_width="137dp"
         android:layout_height="100dp"
         android:layout_marginTop="810dp"
-        android:paddingTop="3dp"
-        android:drawableTop="@drawable/baseline_chat_60"
+        android:background="#298ecc"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/btn_more_more"
-        app:layout_constraintStart_toEndOf="@+id/btn_more_home"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintEnd_toStartOf="@+id/btn_more_home"
+        app:layout_constraintStart_toEndOf="@+id/btn_more_more"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <!-- 기존 버튼 -->
+        <android.widget.Button
+            android:id="@+id/btn_more_chats"
+            style="@style/chat_btn"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:paddingTop="10dp"
+            android:drawableTop="@drawable/baseline_chat_50" />
+
+        <!-- 알림 배지 -->
+        <TextView
+            android:id="@+id/more_notification_badge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top|right"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="25dp"
+            android:background="@drawable/circle_red"
+            android:padding="5dp"
+            android:text="1"
+            android:textColor="@android:color/white"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:visibility="gone" />
+
+    </FrameLayout>
 
     <android.widget.Button
         android:id="@+id/btn_more_more"
@@ -44,7 +71,7 @@
         android:paddingTop="3dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/btn_more_chats"
+        app:layout_constraintStart_toEndOf="@+id/fl_more_chats"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView

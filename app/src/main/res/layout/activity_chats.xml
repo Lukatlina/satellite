@@ -17,22 +17,49 @@
         android:paddingTop="3dp"
         android:drawableTop="@drawable/baseline_person_60"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/btn_chats_chats"
+        app:layout_constraintEnd_toStartOf="@+id/fl_chats_chats"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <android.widget.Button
-        android:id="@+id/btn_chats_chats"
-        style="@style/navigation_btn"
+    <FrameLayout
+        android:id="@+id/fl_chats_chats"
         android:layout_width="137dp"
         android:layout_height="100dp"
         android:layout_marginTop="810dp"
-        android:paddingTop="3dp"
-        android:drawableTop="@drawable/baseline_chat_60"
+        android:background="#298ecc"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/btn_chats_more"
         app:layout_constraintStart_toEndOf="@+id/btn_chats_home"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent">
+
+        <!-- 기존 버튼 -->
+        <android.widget.Button
+            android:id="@+id/btn_chats_chats"
+            style="@style/chat_btn"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:paddingTop="10dp"
+            android:drawableTop="@drawable/baseline_chat_50" />
+
+        <!-- 알림 배지 -->
+        <TextView
+            android:id="@+id/chats_notification_badge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top|right"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="25dp"
+            android:background="@drawable/circle_red"
+            android:padding="5dp"
+            android:text="1"
+            android:textColor="@android:color/white"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:visibility="gone" />
+
+    </FrameLayout>
 
     <android.widget.Button
         android:id="@+id/btn_chats_more"
@@ -44,7 +71,7 @@
         android:paddingTop="3dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/btn_chats_chats"
+        app:layout_constraintStart_toEndOf="@+id/fl_chats_chats"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
@@ -83,15 +110,37 @@
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/baseline_delete_40" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/chats_recy"
-        android:layout_width="409dp"
-        android:layout_height="715dp"
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:layout_marginStart="1dp"
-        android:layout_marginTop="70dp"
         android:layout_marginEnd="1dp"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_chats_title"
+        app:layout_constraintBottom_toTopOf="@id/btn_chats_home"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_chats_title" />
+        app:layout_constraintEnd_toEndOf="parent"
+        android:orientation="vertical"
+        android:gravity="center">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/chats_recy"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone"
+            android:scrollbars="vertical" />
+
+        <TextView
+            android:id="@+id/ev_chats"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:text="채팅가능한 satellite 아티스트가 없습니다."
+            android:textColor="#999999"
+            android:textSize="20dp"
+            android:visibility="visible" />
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

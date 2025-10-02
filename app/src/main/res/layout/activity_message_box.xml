@@ -13,7 +13,6 @@
         android:layout_width="match_parent"
         android:layout_height="40dp"
         android:orientation="horizontal"
-        android:visibility="visible"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -46,8 +45,8 @@
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_gravity="end"
-            android:src="@drawable/baseline_search_40"
-            android:contentDescription="Search" />
+            android:contentDescription="Search"
+            android:src="@drawable/baseline_search_40" />
 
     </LinearLayout>
 
@@ -55,11 +54,10 @@
     <LinearLayout
         android:id="@+id/search_layout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="40dp"
         android:orientation="horizontal"
-        android:padding="8dp"
         android:visibility="gone"
-        app:layout_constraintTop_toBottomOf="@+id/message_box_linear"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
 
@@ -78,14 +76,7 @@
             android:iconifiedByDefault="false"
             android:searchIcon="@drawable/baseline_search_40"
             android:queryHint="메시지 검색" />
-
-        <ImageView
-            android:id="@+id/iv_message_box_close_search"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_gravity="end"
-            android:src="@drawable/baseline_close_40"
-            android:contentDescription="Close Search" />
+        />
     </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView
@@ -99,5 +90,37 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:scrollbars="vertical" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="20dp"
+        android:orientation="horizontal"
+        android:padding="8dp"
+        android:id="@+id/message_box_search_navigation_layout"
+        android:visibility="gone"
+        android:gravity="right"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <ImageButton
+            android:id="@+id/btn_messagebox_prev"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="@drawable/circle_grey"
+            android:src="@drawable/baseline_keyboard_arrow_up_40"
+            android:contentDescription="이전 결과로 이동"
+            android:layout_marginRight="5dp"/>
+
+        <ImageButton
+            android:id="@+id/btn_messagebox_next"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="@drawable/circle_grey"
+            android:src="@drawable/baseline_keyboard_arrow_down_40"
+            android:contentDescription="다음 결과로 이동" />
+
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

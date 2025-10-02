@@ -1,7 +1,6 @@
 package com.example.satellite.model;
 
 public class chat_user {
-
     public static final int VIEW_TYPE_SENDER = 0;
     public static final int VIEW_TYPE_RECEIVER = 1;
     public static final int VIEW_TYPE_HEADER= 2;
@@ -19,8 +18,9 @@ public class chat_user {
     private String sent_time;
     private int fan_message_count;
 
-    public chat_user(int usertype, String sent_time) {
+    public chat_user(int usertype, int message_id, String sent_time) {
         this.usertype = usertype;
+        this.message_id = message_id;
         this.sent_time = sent_time;
     }
 
@@ -31,9 +31,21 @@ public class chat_user {
         this.is_artist = is_artist;
     }
 
-    public chat_user(int usertype, int sender_id, String nickname, String message, String sent_time) {
+    public chat_user(int usertype, int message_id, int sender_id, String nickname, String message, String sent_time) {
         this.usertype = usertype;
+        this.message_id = message_id;
         this.sender_id = sender_id;
+        this.nickname = nickname;
+        this.message = message;
+        this.sent_time = sent_time;
+    }
+
+    public chat_user(int usertype, int chat_id, int sender_id, int is_artist, String image, String nickname, String message, String sent_time) {
+        this.usertype = usertype;
+        this.chat_id = chat_id;
+        this.sender_id = sender_id;
+        this.is_artist = is_artist;
+        this.image = image;
         this.nickname = nickname;
         this.message = message;
         this.sent_time = sent_time;
@@ -41,6 +53,19 @@ public class chat_user {
 
     public chat_user(int usertype, int chat_id, String chatroom_name, int sender_id, int is_artist, String image, String nickname, String message, String sent_time) {
         this.usertype = usertype;
+        this.chat_id = chat_id;
+        this.chatroom_name = chatroom_name;
+        this.sender_id = sender_id;
+        this.is_artist = is_artist;
+        this.image = image;
+        this.nickname = nickname;
+        this.message = message;
+        this.sent_time = sent_time;
+    }
+
+    public chat_user(int usertype, int message_id, int chat_id, String chatroom_name, int sender_id, int is_artist, String image, String nickname, String message, String sent_time) {
+        this.usertype = usertype;
+        this.message_id = message_id;
         this.chat_id = chat_id;
         this.chatroom_name = chatroom_name;
         this.sender_id = sender_id;

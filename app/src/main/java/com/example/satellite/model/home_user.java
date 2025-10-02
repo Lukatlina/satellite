@@ -9,6 +9,7 @@ public class home_user {
 
     int usertype;
     int id;
+    int chat_id;
     String nickname;
     String message;
     String image;
@@ -20,15 +21,17 @@ public class home_user {
         this.title = title;
     }
 
-    public home_user(int usertype, int id, String message, String nickname) {
+    public home_user(int usertype, int chat_id, int id, String message, String nickname) {
         this.usertype = usertype;
+        this.chat_id = chat_id;
         this.id = id;
         this.message = message;
         this.nickname = nickname;
     }
 
-    public home_user(int usertype, int id,  String message, String nickname, String profile) {
+    public home_user(int usertype, int chat_id, int id,  String message, String nickname, String profile) {
         this.usertype = usertype;
+        this.chat_id = chat_id;
         this.id = id;
         this.image = profile;
         this.message = message;
@@ -81,6 +84,14 @@ public class home_user {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public int getChat_id() {
+        return chat_id;
+    }
+
+    public void setChat_id(int chat_id) {
+        this.chat_id = chat_id;
     }
 }
 

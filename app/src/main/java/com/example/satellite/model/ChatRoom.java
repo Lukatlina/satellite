@@ -8,6 +8,8 @@ public class ChatRoom {
     String artist_nickname;
     String last_message;
     String sent_time;
+    int unread_count;
+    int all_unread_count;
 
     public ChatRoom(int chat_id, int artist_id, String artist_image, String artist_nickname, String last_message, String sent_time) {
         this.chat_id = chat_id;
@@ -16,6 +18,27 @@ public class ChatRoom {
         this.artist_nickname = artist_nickname;
         this.last_message = last_message;
         this.sent_time = sent_time;
+    }
+
+    public ChatRoom(int chat_id, int artist_id, String artist_image, String artist_nickname, String last_message, String sent_time, int unread_count) {
+        this.chat_id = chat_id;
+        this.artist_id = artist_id;
+        this.artist_image = artist_image;
+        this.artist_nickname = artist_nickname;
+        this.last_message = last_message;
+        this.sent_time = sent_time;
+        this.unread_count = unread_count;
+    }
+
+    public ChatRoom(int chat_id, int artist_id, String artist_image, String artist_nickname, String last_message, String sent_time, int unread_count, int all_unread_count) {
+        this.chat_id = chat_id;
+        this.artist_id = artist_id;
+        this.artist_image = artist_image;
+        this.artist_nickname = artist_nickname;
+        this.last_message = last_message;
+        this.sent_time = sent_time;
+        this.unread_count = unread_count;
+        this.all_unread_count = all_unread_count;
     }
 
     public int getChat_id() {
@@ -64,5 +87,21 @@ public class ChatRoom {
 
     public void setSent_time(String sent_time) {
         this.sent_time = sent_time;
+    }
+
+    public int getUnread_count() {
+        return unread_count;
+    }
+
+    public void setUnread_count(int unread_count) {
+        this.unread_count = unread_count;
+    }
+
+    public int getAll_unread_count() {
+        return all_unread_count;
+    }
+
+    public void setAll_unread_count(int all_unread_count) {
+        this.all_unread_count = all_unread_count;
     }
 }

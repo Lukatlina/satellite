@@ -16,7 +16,10 @@ import com.example.satellite.R;
 import com.example.satellite.model.chat_user;
 import com.example.satellite.ui.MessageBoxActivity;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 public class ArtistAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private static final int VIEW_TYPE_SENDER = 0;
@@ -100,7 +103,7 @@ public class ArtistAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
         void bind(String message, String sentTime) {
             tvUserMessage.setText(message);
-            tv_sender_message_time.setText(sentTime);
+            tv_sender_message_time.setText(changeFormattedTime(sentTime));
         }
     }
 
@@ -144,6 +147,28 @@ public class ArtistAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         }
     }
 
+    private String changeFormattedTime(String sent_time) {
+        // 원래 형식의 시간 파싱을 위한 SimpleDateFormat
+        SimpleDateFormat originalFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+        // 원하는 형식으로 변환하기 위한 SimpleDateFormat
+        SimpleDateFormat newFormat = new SimpleDateFormat("HH:mm");
+
+        // 문자열을 Date 객체로 파싱
+        Date date = null;
+        try {
+            date = originalFormat.parse(sent_time);
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
+        }
+
+        // Date 객체를 새로운 형식으로 포맷
+        String formattedTime = newFormat.format(date);
+
+        // 포맷된 시간 출력
+        System.out.println("changeFormattedTime: " + formattedTime);
+        return formattedTime;
+    }
 }
 
 

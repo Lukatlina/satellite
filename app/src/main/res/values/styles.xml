@@ -29,6 +29,11 @@
         <item name="android:textColor">@android:color/black</item> <!-- 버튼의 텍스트 색상 -->
     </style>
 
+    <style name="chat_btn">
+        <item name="android:background">@android:color/transparent</item> <!-- 버튼의 배경 설정 -->
+        <item name="android:textColor">@android:color/black</item> <!-- 버튼의 텍스트 색상 -->
+    </style>
+
     <style name="withdrawalButtonStyle">
         <item name="android:background">@drawable/withdrawal</item> <!-- 버튼의 배경 설정 -->
         <item name="android:textColor">@android:color/white</item> <!-- 버튼의 텍스트 색상 -->

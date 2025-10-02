@@ -1,8 +1,10 @@
 package com.example.satellite.ui;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
@@ -18,6 +20,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.bumptech.glide.Glide;
 import com.example.satellite.R;
@@ -48,7 +51,7 @@ public class MoreActivity extends AppCompatActivity {
     Button btn_more_withdrawal;
 
     ImageView iv_more_profile;
-    TextView tv_more_nickname;
+    TextView tv_more_nickname, more_notification_badge;
     View view_line_2;
     View view_line_3;
 
@@ -60,6 +63,23 @@ public class MoreActivity extends AppCompatActivity {
     String email;
     String nickname;
     String image_uri;
+    int totalUnreadCount;
+
+    // BroadcastReceiver 정의
+    private final BroadcastReceiver unreadCountReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            // com.example.UPDATE_UNREAD_COUNT 액션 수신 시 처리
+            if ("com.example.UPDATE_UNREAD_COUNT".equals(intent.getAction())) {
+                totalUnreadCount = intent.getIntExtra("totalUnreadCount", 0);
+                if (is_artist == 0) {
+                    // UI 업데이트 (예: TextView에 표시)
+                    more_notification_badge.setText(String.valueOf(totalUnreadCount));
+                    more_notification_badge.setVisibility(View.VISIBLE);
+                }
+            }
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,6 +97,8 @@ public class MoreActivity extends AppCompatActivity {
         btn_more_edit_profile = findViewById(R.id.btn_more_edit_profile);
         btn_more_logout = findViewById(R.id.btn_more_logout);
         btn_more_withdrawal = findViewById(R.id.btn_more_withdrawal);
+        more_notification_badge = findViewById(R.id.more_notification_badge);
+
 
         iv_more_profile = findViewById(R.id.iv_more_profile);
         tv_more_nickname = findViewById(R.id.tv_more_nickname);
@@ -101,11 +123,15 @@ public class MoreActivity extends AppCompatActivity {
 
         loadUserdata();
 
+        // 브로드캐스트 리시버 등록
+        IntentFilter filter = new IntentFilter("com.example.UPDATE_UNREAD_COUNT");
+        LocalBroadcastManager.getInstance(this).registerReceiver(unreadCountReceiver, filter);
+
         btn_more_home.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(MoreActivity.this, HomeActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
                 startActivity(intent);
                 finish();
             }
@@ -115,7 +141,7 @@ public class MoreActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(MoreActivity.this, ChatsActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
                 startActivity(intent);
                 finish();
             }
@@ -218,7 +244,6 @@ public class MoreActivity extends AppCompatActivity {
                 });
 
                 menu.show();
-
             }
         });
 
@@ -237,12 +262,6 @@ public class MoreActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        loadUserdata();
     }
 
     private void loadUserdata() {
@@ -316,8 +335,33 @@ public class MoreActivity extends AppCompatActivity {
                         }
                     }
                 });
-
             }
         });
+    }
+
+    private void updateUnreadMessageUI(int is_artist) {
+        if (is_artist == 0) {
+            if (totalUnreadCount > 0) {
+                user_editor.putInt("totalUnreadCount", totalUnreadCount);
+                user_editor.apply();
+                more_notification_badge.setText(String.valueOf(totalUnreadCount));
+                more_notification_badge.setVisibility(View.VISIBLE);
+            }else{
+                more_notification_badge.setVisibility(View.GONE);
+            }
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        loadUserdata();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        // 리시버 해제
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(unreadCountReceiver);
     }
 }

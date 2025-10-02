@@ -44,7 +44,7 @@ public class SearchArtistActivity extends AppCompatActivity {
     SharedPreferences.Editor user_editor;
 
 //    String uniq_id;
-    String user_id;
+    int user_id;
     String keyword;
 
     RecyclerView recyclerView;
@@ -71,7 +71,7 @@ public class SearchArtistActivity extends AppCompatActivity {
         user = this.getSharedPreferences("user", Context.MODE_PRIVATE);
         user_editor = user.edit();
 
-        user_id = user.getString("user_id", "");
+        user_id = user.getInt("user_id", -1);
         Log.i(TAG, "user_id" + user_id);
 
         search_artists = new ArrayList<>();
@@ -153,6 +153,7 @@ public class SearchArtistActivity extends AppCompatActivity {
                             home_user user = data.get(i);
                             int usertype = user.getUsertype();
                             int id = user.getId();
+                            int chat_id = user.getChat_id();
                             String message = user.getMessage();
                             String nickname = user.getNickname();
                             String image = user.getImage();
@@ -163,19 +164,19 @@ public class SearchArtistActivity extends AppCompatActivity {
                                     search_artists.add(new home_user(home_user.TYPE_HEADER, "내 프로필"));
                                     userSectionAdded = true;
                                 }
-                                search_artists.add(new home_user(home_user.TYPE_USER, id, message, nickname, image));
+                                search_artists.add(new home_user(home_user.TYPE_USER, chat_id,  id, message, nickname, image));
                             } else if (usertype == 1) {
                                 if (!planetSectionAdded) {
                                     search_artists.add(new home_user(home_user.TYPE_HEADER, "My planet"));
                                     planetSectionAdded = true;
                                 }
-                                search_artists.add(new home_user(home_user.TYPE_PLANET , id ,message, nickname, image));
+                                search_artists.add(new home_user(home_user.TYPE_PLANET ,chat_id,  id ,message, nickname, image));
                             } else if (usertype == 2) {
                                 if (!artistSectionAdded) {
                                     search_artists.add(new home_user(home_user.TYPE_HEADER, "추천 아티스트"));
                                     artistSectionAdded = true;
                                 }
-                                search_artists.add(new home_user(home_user.TYPE_ARTIST , id ,message, nickname, image));
+                                search_artists.add(new home_user(home_user.TYPE_ARTIST , chat_id, id ,message, nickname, image));
                             }
                             adapter.notifyDataSetChanged();
                             updateUI(keyword);

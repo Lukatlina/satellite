@@ -55,7 +55,7 @@ public class ChangeNicknameActivity extends AppCompatActivity {
     TextInputEditText et_change_nickname;
 
     String uniq_id;
-    String is_artist;
+    int is_artist;
     String email;
     String nickname;
     String change_nickname;
@@ -80,7 +80,7 @@ public class ChangeNicknameActivity extends AppCompatActivity {
         user_editor = user.edit();
 
         uniq_id = user.getString("uniq_id", "");
-        is_artist = user.getString("is_artist", "");
+        is_artist = user.getInt("is_artist", -1);
 
         HttpUrl.Builder urlBuilder = HttpUrl.parse("http://52.78.77.90/satellite/user_data.php").newBuilder();
         String url = urlBuilder.build().toString();
@@ -88,7 +88,7 @@ public class ChangeNicknameActivity extends AppCompatActivity {
         // POST 파라미터 추가
         RequestBody formBody = new FormBody.Builder()
                 .add("uniq_id", uniq_id)
-                .add("is_artist", is_artist)
+                .add("is_artist", String.valueOf(is_artist))
                 .build();
 
         // 요청 만들기

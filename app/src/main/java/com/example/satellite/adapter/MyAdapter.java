@@ -75,11 +75,13 @@ public class MyAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                         Log.i(TAG, "눌려서 값이 보이나 이미지?" + clickedItem.getImage());
                         Log.i(TAG, "눌려서 값이 보이나 유저타입?" + clickedItem.getUsertype());
                         intent.putExtra("id", clickedItem.getId());
+                        intent.putExtra("chat_id", clickedItem.getChat_id());
                         intent.putExtra("nickname", clickedItem.getNickname());
                         intent.putExtra("message", clickedItem.getMessage());
                         intent.putExtra("image", clickedItem.getImage());
                         intent.putExtra("usertype", clickedItem.getUsertype());
                         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        Log.i(TAG, "클릭 : chat_id : " + clickedItem.getChat_id());
                         context.startActivity(intent);
                     }
                 }

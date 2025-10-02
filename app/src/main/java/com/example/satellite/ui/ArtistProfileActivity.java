@@ -1,10 +1,14 @@
 package com.example.satellite.ui;
 
 import android.app.Dialog;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
@@ -20,8 +24,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.bumptech.glide.Glide;
+import com.example.satellite.ChatService;
 import com.example.satellite.R;
 
 import java.io.IOException;
@@ -37,6 +43,8 @@ import okhttp3.Response;
 
 public class ArtistProfileActivity extends AppCompatActivity {
     private static final String TAG = "ArtistProfileActivity";
+    private ChatService chatService;
+    private boolean isBound = false;
 
     ImageView iv_artist_profile_close_btn;
     ImageView iv_artist_profile_more_btn;
@@ -56,6 +64,25 @@ public class ArtistProfileActivity extends AppCompatActivity {
 
     SharedPreferences user;
     SharedPreferences.Editor user_editor;
+
+    private ServiceConnection serviceConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            // 바인딩된 서비스의 IBinder를 통해 서비스 인스턴스를 가져옵니다.
+            ChatService.LocalBinder binder = (ChatService.LocalBinder) service;
+            chatService = binder.getService();
+            isBound = true;
+            Log.i(TAG, "서비스 연결됨");
+
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            chatService = null;
+            isBound = false;
+            Log.i(TAG, "서비스 연결이 해제됨");
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,6 +112,11 @@ public class ArtistProfileActivity extends AppCompatActivity {
         artist_nickname = intent.getStringExtra("nickname");
         artist_message = intent.getStringExtra("message");
         artist_image = intent.getStringExtra("image");
+
+        // 서비스 시작 및 바인딩
+        Intent serviceIntent = new Intent(ArtistProfileActivity.this, ChatService.class);
+        bindService(serviceIntent, serviceConnection, Context.BIND_AUTO_CREATE);
+
 
         if (artist_image == null) {
             iv_artist_profile_profile.setImageResource(R.drawable.baseline_person_150);
@@ -184,7 +216,6 @@ public class ArtistProfileActivity extends AppCompatActivity {
                     @Override
                     public void run() {
                         try {
-
                             if (!response.isSuccessful()) {
                                 // 응답 실패
                                 Log.i(TAG, "응답실패");
@@ -201,13 +232,14 @@ public class ArtistProfileActivity extends AppCompatActivity {
                                     Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
                                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                                     startActivity(intent);
-
+                                    finish();
                                 } else {
                                     Toast.makeText(getApplicationContext(), "다시 로그인해주세요.", Toast.LENGTH_SHORT).show();
                                     Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
                                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                                     startActivity(intent);
                                 }
+                                chatService.sendUserInfoToServer();
                             }
 
                         } catch (Exception e) {

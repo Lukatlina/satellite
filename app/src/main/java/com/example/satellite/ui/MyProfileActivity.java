@@ -36,6 +36,7 @@ public class MyProfileActivity extends AppCompatActivity {
     SharedPreferences.Editor user_editor;
 
     int is_artist;
+    int chat_id;
     String uniq_id;
 
     @Override
@@ -73,6 +74,7 @@ public class MyProfileActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         String id = intent.getStringExtra("id");
+        chat_id = intent.getIntExtra("chat_id", -1);
         String nickname = intent.getStringExtra("nickname");
         String message = intent.getStringExtra("message");
         String image = intent.getStringExtra("image");
@@ -113,6 +115,7 @@ public class MyProfileActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getApplicationContext(), ArtistChatActivity.class);
+                intent.putExtra("chat_id", chat_id);
                 startActivity(intent);
             }
         });

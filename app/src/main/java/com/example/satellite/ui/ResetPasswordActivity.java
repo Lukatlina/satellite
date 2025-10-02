@@ -75,7 +75,7 @@ public class ResetPasswordActivity extends AppCompatActivity {
     Button btn_reset_pw_return;
 
     String uniq_id;
-    String is_artist;
+    int is_artist;
     String email;
     String nickname;
     String authcode;
@@ -120,7 +120,7 @@ public class ResetPasswordActivity extends AppCompatActivity {
         user_editor = user.edit();
 
         uniq_id = user.getString("uniq_id", "");
-        is_artist = user.getString("is_artist", "");
+        is_artist = user.getInt("is_artist", -1);
 
         // 쉐어드에 값이 있다면 로그인 된 것이기 때문에 email을 보여줌
         if (!uniq_id.isEmpty()) {
@@ -131,7 +131,7 @@ public class ResetPasswordActivity extends AppCompatActivity {
             // POST 파라미터 추가
             RequestBody formBody = new FormBody.Builder()
                     .add("uniq_id", uniq_id)
-                    .add("is_artist", is_artist)
+                    .add("is_artist", String.valueOf(is_artist))
                     .build();
 
             // 요청 만들기
